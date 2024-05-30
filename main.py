@@ -1,10 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
 from utilities.database import Database
-from routes import user
+from routes import user, expenses
 
-load_dotenv()
 app = FastAPI()
 db = Database()
 app.add_middleware(
@@ -15,8 +13,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(user.router)
+app.include_router(expenses.router)
 
 
 @app.get("/")
-def read_root():
+async def read_root(req: Request):
     return {"Hello": "World"}
