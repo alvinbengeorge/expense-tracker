@@ -15,7 +15,6 @@ app.add_middleware(
 app.include_router(user.router)
 app.include_router(expenses.router)
 
-
 @app.get("/")
 async def read_root(req: Request):
     return {"Hello": "World"}
