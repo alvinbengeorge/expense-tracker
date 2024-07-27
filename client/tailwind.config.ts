@@ -11,7 +11,11 @@ const config: Config = {
     themes: ["dracula"],
   },
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        bricolage: ["Bricolage Grotesque", "sans-serif"],
+      },
+    },
   },
   plugins: [daisyui],
 };
