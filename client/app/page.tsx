@@ -2,11 +2,13 @@
 import { useState } from "react";
 import { createUser, loginUser } from "./utils/api";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -20,7 +22,7 @@ const Login = () => {
           const newRes = await loginUser(username, password);
           if (newRes.status === "success") {
             toast.success("User created and logged in successfully!");
-            // window.location.href = "/dashboard";
+            router.push("/dashboard");
           } else {
             toast.error(newRes.error || "User creation failed.");
           }
@@ -29,7 +31,7 @@ const Login = () => {
         }
       } else {
         toast.success("Login successful!");
-        // window.location.href = "/dashboard";
+        router.push("/dashboard");
       }
     } catch (err) {
       toast.error("An unexpected error occurred. Please try again.");

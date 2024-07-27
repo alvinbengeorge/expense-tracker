@@ -1,7 +1,9 @@
+"use server";
 import axios from "axios";
+import { cookies } from "next/headers";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
+const token = cookies().get("token");
 interface ApiResponse {
   status: "success" | "error";
   data?: any;
@@ -73,5 +75,51 @@ export const loginUser = async (
       return await createUser(username, password);
     }
     return handleError(error);
+  }
+};
+
+export const postExpense = async (expense: any) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/expenses`, expense, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error posting expense:", error);
+    throw error;
+  }
+};
+
+export const getExpenses = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/expenses`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching expenses:", error);
+    throw error;
+  }
+};
+
+export const updateExpense = async (expense: any) => {
+  try {
+    const response = await axios.put(
+      `${API_BASE_URL}/expenses/${expense.id}`,
+      expense
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating expense:", error);
+    throw error;
+  }
+};
+
+export const deleteExpense = async (id: any) => {
+  try {
+    await axios.delete(`${API_BASE_URL}/expenses/${id}`);
+  } catch (error) {
+    console.error("Error deleting expense:", error);
+    throw error;
   }
 };
