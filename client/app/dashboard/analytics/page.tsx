@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Bar, Pie, Line } from "react-chartjs-2";
+import { Pie, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,8 +14,9 @@ import {
   LineElement,
 } from "chart.js";
 import Sidebar from "@/components/Sidebar";
+import Average from "@/components/Average";
+import Loader from "@/components/Loader";
 
-// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -48,17 +49,32 @@ const mockData = {
 };
 
 const AnalyticsPage = () => {
-  const [data, setData] = useState(mockData);
+  const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    //todo api call
+    setTimeout(() => {
+      setData(mockData);
+    }, 2000);
   }, []);
 
-  const expenseCategories = data.expenseCategories.map((item) => item.category);
-  const expenseAmounts = data.expenseCategories.map((item) => item.amount);
+  if (!data) {
+    return (
+      <div className="flex gap-5">
+        <Sidebar />
+        <div className="p-6 sm:p-10 font-bricolage min-h-screen w-[70vw]">
+          <Loader />
+        </div>
+      </div>
+    );
+  }
 
-  const monthlyLabels = data.monthlyTrends.map((item) => item.month);
-  const monthlyAmounts = data.monthlyTrends.map((item) => item.amount);
+  const expenseCategories = data.expenseCategories.map(
+    (item: any) => item.category
+  );
+  const expenseAmounts = data.expenseCategories.map((item: any) => item.amount);
+
+  const monthlyLabels = data.monthlyTrends.map((item: any) => item.month);
+  const monthlyAmounts = data.monthlyTrends.map((item: any) => item.amount);
 
   const expenseCategoryData = {
     labels: expenseCategories,
@@ -99,16 +115,10 @@ const AnalyticsPage = () => {
         <h1 className="text-3xl sm:text-4xl font-bold mb-6 text-[#a991f7]">
           Analytics
         </h1>
-        <div className="mb-8 sm:mb-10 p-4 rounded-lg shadow-md bg-[#363848] flex justify-between">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
-              Total Expenses
-            </h2>
-            <p className="text-lg sm:text-xl">${data.totalExpenses}</p>
-          </div>
-          <h2 className="font-bold text-2xl">You could have saved more 🫣</h2>
+        <div className="shadow-2xl">
+          <Average />
         </div>
-        <div className="mb-8 sm:mb-10 p-4 rounded-lg shadow-md bg-[#363848]">
+        <div className="mb-8 mt-10 sm:mb-10 p-4 rounded-lg shadow-md bg-[#363848]">
           <h2 className="text-xl sm:text-2xl font-semibold mb-4">
             Expense Breakdown
           </h2>

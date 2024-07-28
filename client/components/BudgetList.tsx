@@ -12,7 +12,6 @@ import {
 } from "chart.js";
 import { DollarSign, Calendar } from "lucide-react";
 
-// Register the components used in charts
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -22,7 +21,6 @@ ChartJS.register(
   Legend
 );
 
-// Mock data for budgets
 const mockBudgets = [
   {
     id: "1",

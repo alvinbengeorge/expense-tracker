@@ -5,7 +5,6 @@ import { Progress } from "@radix-ui/react-progress";
 import Sidebar from "@/components/Sidebar";
 import BudgetForm from "@/components/BudgetForm";
 
-// Mock data for existing budgets
 const mockBudgets = [
   {
     id: 1,
@@ -44,7 +43,7 @@ const BudgetPage = () => {
       name,
       target,
       achieved,
-      icon: <Star />, // Default icon, you can add an option to choose icons
+      icon: <Star />,
     };
     setBudgets([...budgets, newBudget]);
     setName("");

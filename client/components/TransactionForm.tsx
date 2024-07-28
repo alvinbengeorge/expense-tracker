@@ -1,12 +1,27 @@
-// components/TransactionForm.tsx
-import { postExpense } from "@/app/utils/api";
-import { ArrowRightLeft, IndianRupee } from "lucide-react";
+import { postExpense } from "@/utils/api";
+import { ArrowRightLeft, Component, IndianRupee } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+const categories = [
+  "Food and Dining",
+  "Utilities",
+  "Transportation",
+  "Housing",
+  "Health and Wellness",
+  "Entertainment",
+  "Shopping",
+  "Education",
+  "Travel",
+  "Financial Expenses",
+];
+
 const TransactionForm = () => {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [amount, setAmount] = useState(0);
+  const [category, setCategory] = useState(categories[0]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -15,15 +30,17 @@ const TransactionForm = () => {
     const newExpense = {
       name,
       amount,
+      category,
       timestamp: Date.now(),
     };
     try {
       const response = await postExpense(newExpense);
       setIsLoading(false);
       toast.success("Transaction added successfully.");
-      console.log(response);
+      router.refresh();
       setName("");
       setAmount(0);
+      setCategory(categories[0]);
     } catch (error) {
       setIsLoading(false);
       toast.error("Failed to add transaction.");
@@ -60,10 +77,25 @@ const TransactionForm = () => {
             disabled={isLoading}
           />
         </label>
+        <label className="input input-bordered flex items-center gap-2 w-fit">
+          <Component />
+          <select
+            className="grow bg-inherit"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            disabled={isLoading}
+          >
+            {categories.map((cat, index) => (
+              <option key={index} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
       <button
         type="submit"
-        className="btn btn-outline btn-secondary transition w-fit"
+        className="btn btn-outline  transition w-fit"
         disabled={isLoading}
       >
         {isLoading ? (
