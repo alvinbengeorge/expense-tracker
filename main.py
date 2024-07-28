@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from utilities.database import Database
-from routes import user, expenses
+from routes import user, expenses, budget
 
 app = FastAPI()
 db = Database()
@@ -14,7 +14,7 @@ app.add_middleware(
 )
 app.include_router(user.router)
 app.include_router(expenses.router)
-
+app.include_router(budget.router)
 
 @app.get("/")
 async def read_root(req: Request):
