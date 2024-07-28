@@ -1,6 +1,6 @@
 from fastapi import Request, APIRouter
 from utilities.database import Database
-from utilities.schema import BudgetSchema
+from utilities.schema import BudgetSchema, EditBudgetSchema
 from utilities.middleware import middleware
 from utilities.response import JSONResponse
 from utilities.jwt import read_token
@@ -32,8 +32,9 @@ async def create_budget(req: Request, budget: BudgetSchema):
 
 @router.put("/budget/{budget_id}")
 @middleware
-async def update_budget(req: Request, budget_id: str, budget: BudgetSchema):
+async def update_budget(req: Request, budget_id: str, budget: EditBudgetSchema):
     token_data = read_token(req.headers.get("Authorization"), secret=db.secret)
+    print(dict(budget))
     db.budgets.update_one(
         {"_id": ObjectId(budget_id), "user_id": token_data["id"]},
         {"$set": dict(budget)},
