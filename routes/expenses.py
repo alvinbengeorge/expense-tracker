@@ -4,24 +4,32 @@ from utilities.response import JSONResponse
 from utilities.middleware import middleware
 from utilities.jwt import read_token
 from utilities.schema import Expense
+from utilities.dates import get_current_month_timestamp
 
 router = APIRouter()
 db = Database()
+
 
 @router.get("/expenses")
 @middleware
 async def get_expenses(req: Request):
     token_data = read_token(req.headers.get("Authorization"), secret=db.secret)
     expenses = db.expenses.find({"user_id": token_data["id"]})
-    return JSONResponse({"expenses": list(expenses)})
+    expenses = list(expenses)
+    for i in range(len(expenses)):
+        expenses[i]["_id"] = str(expenses[i]["_id"])
+    return JSONResponse({"expenses": expenses})
+
 
 @router.post("/expenses")
 @middleware
 async def create_expense(req: Request, expense: Expense):
     token_data = read_token(req.headers.get("Authorization"), secret=db.secret)
-    expense.user_id = token_data["id"]
-    db.expenses.insert_one(dict(expense))
+    expense = dict(expense)
+    expense["user_id"] = token_data["id"]
+    db.expenses.insert_one(expense)
     return JSONResponse({"message": "Expense created"})
+
 
 @router.delete("/expenses/{expense_id}")
 @middleware
@@ -29,3 +37,26 @@ async def delete_expense(req: Request, expense_id: str):
     token_data = read_token(req.headers.get("Authorization"), secret=db.secret)
     db.expenses.delete_one({"_id": expense_id, "user_id": token_data["id"]})
     return JSONResponse({"message": "Expense deleted"})
+
+
+@router.get("/average")
+@middleware
+async def get_average(req: Request):
+    token_data = read_token(req.headers.get("Authorization"), secret=db.secret)
+    count = db.expenses.count_documents(
+        {
+            "user_id": token_data["id"],
+            "timestamp": {"$gte": get_current_month_timestamp()},
+        }
+    )
+    if count == 0:
+        return JSONResponse({"average": 0, "total": 0, "count": 0})
+    expenses = db.expenses.find(
+        {
+            "user_id": token_data["id"],
+            "timestamp": {"$gte": get_current_month_timestamp()},
+        }
+    )
+    total = sum(expense["amount"] for expense in expenses)
+
+    return JSONResponse({"average": total / count, "total": total, "count": count})
