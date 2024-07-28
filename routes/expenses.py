@@ -1,3 +1,4 @@
+from bson import ObjectId
 from fastapi import APIRouter, Request
 from utilities.database import Database
 from utilities.response import JSONResponse
@@ -35,7 +36,7 @@ async def create_expense(req: Request, expense: Expense):
 @middleware
 async def delete_expense(req: Request, expense_id: str):
     token_data = read_token(req.headers.get("Authorization"), secret=db.secret)
-    db.expenses.delete_one({"_id": expense_id, "user_id": token_data["id"]})
+    db.expenses.delete_one({"_id": ObjectId(expense_id), "user_id": token_data["id"]})
     return JSONResponse({"message": "Expense deleted"})
 
 
@@ -60,3 +61,19 @@ async def get_average(req: Request):
     total = sum(expense["amount"] for expense in expenses)
 
     return JSONResponse({"average": total / count, "total": total, "count": count})
+
+@router.get("/category/{category}")
+@middleware
+async def get_category_expenses(req: Request, category: str):
+    token_data = read_token(req.headers.get("Authorization"), secret=db.secret)
+    expenses = list(db.expenses.find(
+        {
+            "user_id": token_data["id"],
+            "category": category,
+        }
+    ))
+    for i in range(len(expenses)):
+        expenses[i]["_id"] = str(expenses[i]["_id"])
+    return JSONResponse({"expenses": expenses})
+
+
