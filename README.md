@@ -21,30 +21,57 @@ Welcome to the Budgeting App! This application helps you manage your expenses, c
 
 ## Installation
 
+### Backend
+
 1. Clone the repository:
     ```bash
-    git clone https://github.com/your-username/budgeting-app.git
+    git clone https://github.com/alvinbengeorge/expense-tracker.git
     ```
 2. Navigate to the project directory:
     ```bash
-    cd client
+    cd expense-tracker
     ```
 3. Install the dependencies:
     ```bash
+    pip3 install -r requirements.txt
+    ```
+4. Create a `.env` file in the root directory and add your environment variables:
+    ```env
+    DB_URI=your_mongodb_uri
+    DB_NAME=expense-tracker
+    SECRET=your_secret
+    ```
+
+### Frontend
+
+1. Navigate to the project directory:
+    ```bash
+    cd client
+    ```
+2. Install the dependencies:
+    ```bash
     pnpm i
     ```
-4. Create a `.env.local` file in the root directory and add your environment variables:
+3. Create a `.env.local` file in the root directory and add your environment variables:
     ```env
     NEXT_PUBLIC_API_URL=your_api_url
+    ```
+4. Run build:
+    ```bash
+    pnpm build
     ```
 
 ## Usage
 
-1. Start the development server:
+1. Start the backend server:
     ```bash
-    pnpm run dev
+    uvicorn main:app --host=0.0.0.0 --port=8000 --workers 4
     ```
-2. Open your browser and navigate to `http://localhost:3000`.
+2. Start the development server:
+    ```bash
+    pnpm start 
+    ```
+3. Open your browser and navigate to `https://yourdomain.com`.
 
 ## Contributing
 
