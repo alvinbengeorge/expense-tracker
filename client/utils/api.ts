@@ -1,43 +1,19 @@
-"use server";
-import axios from "axios";
-import { cookies } from "next/headers";
+// authApi.ts
+import apiClient, { handleResponse, handleError } from "./apiClient";
+import { setToken } from "./session";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const token = cookies().get("token");
 interface ApiResponse {
   status: "success" | "error";
   data?: any;
   error?: string;
 }
 
-const handleResponse = (response: any): ApiResponse => {
-  return {
-    status: "success",
-    data: response.data,
-  };
-};
-
-const handleError = (error: any): ApiResponse => {
-  if (error.response) {
-    return {
-      status: "error",
-      error:
-        error.response.data.error || "An error occurred. Please try again.",
-    };
-  } else {
-    return {
-      status: "error",
-      error: "Network error. Please check your connection.",
-    };
-  }
-};
-
 export const createUser = async (
   username: string,
   password: string
 ): Promise<ApiResponse> => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/create_user`, {
+    const response = await apiClient.post("/create_user", {
       username,
       password,
     });
@@ -54,7 +30,7 @@ export const loginUser = async (
   password: string
 ): Promise<ApiResponse> => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/login`, {
+    const response = await apiClient.post("/login", {
       username,
       password,
     });
@@ -62,7 +38,7 @@ export const loginUser = async (
     const { token } = response.data;
 
     if (token) {
-      document.cookie = `token=${token}; path=/`;
+      setToken(token);
       return handleResponse(response);
     } else {
       return {
@@ -71,7 +47,7 @@ export const loginUser = async (
       };
     }
   } catch (error: any) {
-    if (error.response && error.response.data.error === "User does not exist") {
+    if (error.response?.data.error === "User does not exist") {
       return await createUser(username, password);
     }
     return handleError(error);
@@ -80,12 +56,8 @@ export const loginUser = async (
 
 export const postExpense = async (expense: any) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/expenses`, expense, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
+    const response = await apiClient.post("/expenses", expense);
+    return handleResponse(response);
   } catch (error) {
     console.error("Error posting expense:", error);
     throw error;
@@ -94,8 +66,8 @@ export const postExpense = async (expense: any) => {
 
 export const getExpenses = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/expenses`);
-    return response.data;
+    const response = await apiClient.get("/expenses");
+    return handleResponse(response);
   } catch (error) {
     console.error("Error fetching expenses:", error);
     throw error;
@@ -104,22 +76,20 @@ export const getExpenses = async () => {
 
 export const updateExpense = async (expense: any) => {
   try {
-    const response = await axios.put(
-      `${API_BASE_URL}/expenses/${expense.id}`,
-      expense
-    );
-    return response.data;
+    const response = await apiClient.put(`/expenses/${expense.id}`, expense);
+    return handleResponse(response);
   } catch (error) {
     console.error("Error updating expense:", error);
     throw error;
   }
 };
 
-export const deleteExpense = async (id: any) => {
+export const deleteExpense = async (_id: string): Promise<ApiResponse> => {
   try {
-    await axios.delete(`${API_BASE_URL}/expenses/${id}`);
+    await apiClient.delete(`/expenses/${_id}`);
+    return { status: "success" };
   } catch (error) {
     console.error("Error deleting expense:", error);
-    throw error;
+    return handleError(error);
   }
 };
