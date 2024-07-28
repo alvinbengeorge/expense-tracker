@@ -14,6 +14,7 @@ class Database:
         self.db = self.client[db_name]
         self.users = self.db.users
         self.expenses = self.db.expenses
+        self.budgets = self.db.budgets
 
     def __del__(self):
         self.client.close()
