@@ -15,3 +15,4 @@ class Expense(BaseModel):
     name: str
     amount: float
     timestamp: int
+    category: str

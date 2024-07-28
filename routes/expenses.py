@@ -60,3 +60,19 @@ async def get_average(req: Request):
     total = sum(expense["amount"] for expense in expenses)
 
     return JSONResponse({"average": total / count, "total": total, "count": count})
+
+@router.get("/category/{category}")
+@middleware
+async def get_category_expenses(req: Request, category: str):
+    token_data = read_token(req.headers.get("Authorization"), secret=db.secret)
+    expenses = list(db.expenses.find(
+        {
+            "user_id": token_data["id"],
+            "category": category,
+        }
+    ))
+    for i in range(len(expenses)):
+        expenses[i]["_id"] = str(expenses[i]["_id"])
+    return JSONResponse({"expenses": expenses})
+
+
