@@ -74,9 +74,9 @@ export const getExpenses = async () => {
   }
 };
 
-export const updateExpense = async (expense: any) => {
+export const updateExpense = async (transactionData: any, _id: string) => {
   try {
-    const response = await apiClient.put(`/expenses/${expense.id}`, expense);
+    const response = await apiClient.put(`/expenses/${_id}`, transactionData);
     return handleResponse(response);
   } catch (error) {
     console.error("Error updating expense:", error);

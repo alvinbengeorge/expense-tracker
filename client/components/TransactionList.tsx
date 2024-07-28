@@ -29,6 +29,7 @@ interface Transaction {
   amount: number;
   timestamp: number;
   category: string;
+  user_id?: string;
 }
 
 interface TransactionListProps {
@@ -92,26 +93,10 @@ const TransactionList: React.FC<TransactionListProps> = ({
     fetchTransactions();
   }, []);
 
-  const addTransaction = async (transaction: Transaction) => {
-    try {
-      const response: ApiResponse = await postExpense(transaction);
-      if (response.status === "success") {
-        setTransactions([...transactions, response.data]);
-        toast.success("Transaction added successfully.");
-        router.refresh();
-      } else {
-        toast.error("Failed to add transaction.");
-        console.error("Failed to add transaction:", response.error);
-      }
-    } catch (error) {
-      toast.error("Failed to add transaction.");
-      console.error("Failed to add transaction:", error);
-    }
-  };
-
   const updateTransaction = async (updatedTransaction: Transaction) => {
     try {
-      const response: ApiResponse = await updateExpense(updatedTransaction);
+      const { user_id, _id, ...transactionData } = updatedTransaction;
+      const response: ApiResponse = await updateExpense(transactionData, _id!);
       if (response.status === "success") {
         setTransactions(
           transactions.map((transaction) =>
@@ -120,6 +105,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
         );
         setCurrentTransaction(null);
         setEditTransactionId(null);
+        router.refresh();
         toast.success("Transaction updated successfully.");
       } else {
         toast.error("Failed to update transaction.");
@@ -155,6 +141,26 @@ const TransactionList: React.FC<TransactionListProps> = ({
 
   const saveTransaction = (transaction: Transaction) => {
     updateTransaction(transaction);
+  };
+
+  const handleKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>,
+    transaction: Transaction
+  ) => {
+    if (event.key === "Enter") {
+      const updatedTransactions = transactions.map((t) =>
+        t._id === transaction._id
+          ? { ...transaction, amount: parseFloat(event.currentTarget.value) }
+          : t
+      );
+      setTransactions(updatedTransactions);
+      saveTransaction({
+        ...transaction,
+        amount: parseFloat(event.currentTarget.value),
+      });
+
+      setEditTransactionId(null);
+    }
   };
 
   const groupedTransactions = transactions.reduce((acc, transaction) => {
@@ -199,6 +205,12 @@ const TransactionList: React.FC<TransactionListProps> = ({
                             saveTransaction({
                               ...transaction,
                               amount: parseFloat(e.target.value),
+                            })
+                          }
+                          onKeyDown={(e) =>
+                            handleKeyDown(e, {
+                              ...transaction,
+                              amount: parseFloat(e.currentTarget.value),
                             })
                           }
                           placeholder="Enter new amount"
