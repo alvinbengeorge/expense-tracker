@@ -17,10 +17,12 @@ class Expense(BaseModel):
     timestamp: int
     category: str
 
+
 class BudgetSchema(BaseModel):
     budget_name: str
     amount: float
     achieved_by: int
+
 
 class EditBudgetSchema(BaseModel):
     budget_name: str

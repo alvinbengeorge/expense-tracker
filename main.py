@@ -16,6 +16,7 @@ app.include_router(user.router)
 app.include_router(expenses.router)
 app.include_router(budget.router)
 
+
 @app.get("/")
 async def read_root(req: Request):
     return {"Hello": "World"}

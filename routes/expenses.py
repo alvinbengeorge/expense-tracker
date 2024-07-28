@@ -31,6 +31,7 @@ async def create_expense(req: Request, expense: Expense):
     db.expenses.insert_one(expense)
     return JSONResponse({"message": "Expense created"})
 
+
 @router.put("/expenses/{expense_id}")
 @middleware
 async def update_expense(req: Request, expense_id: str, expense: Expense):
@@ -40,6 +41,7 @@ async def update_expense(req: Request, expense_id: str, expense: Expense):
         {"$set": dict(expense)},
     )
     return JSONResponse({"message": "Expense updated"})
+
 
 @router.delete("/expenses/{expense_id}")
 @middleware
@@ -71,16 +73,19 @@ async def get_average(req: Request):
 
     return JSONResponse({"average": total / count, "total": total, "count": count})
 
+
 @router.get("/category/{category}")
 @middleware
 async def get_category_expenses(req: Request, category: str = ""):
     token_data = read_token(req.headers.get("Authorization"), secret=db.secret)
-    expenses = list(db.expenses.find(
-        {
-            "user_id": token_data["id"],
-            "category": category,
-        }
-    ))
+    expenses = list(
+        db.expenses.find(
+            {
+                "user_id": token_data["id"],
+                "category": category,
+            }
+        )
+    )
     for i in range(len(expenses)):
         expenses[i]["_id"] = str(expenses[i]["_id"])
     return JSONResponse({"expenses": expenses})
@@ -103,4 +108,4 @@ async def get_categorywise(req: Request):
             "average": total / len(expenses),
             "expenses": expenses,
         }
-    return JSONResponse({"categories": data}) 
+    return JSONResponse({"categories": data})

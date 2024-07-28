@@ -9,6 +9,7 @@ from bson import ObjectId
 router = APIRouter()
 db = Database()
 
+
 @router.get("/budget")
 @middleware
 async def get_budgets(req: Request):
@@ -20,6 +21,7 @@ async def get_budgets(req: Request):
         budgets[i]["percentage"] = (budgets[i]["progress"] / budgets[i]["amount"]) * 100
     return JSONResponse({"budgets": budgets})
 
+
 @router.post("/budget")
 @middleware
 async def create_budget(req: Request, budget: BudgetSchema):
@@ -28,7 +30,10 @@ async def create_budget(req: Request, budget: BudgetSchema):
     budget["user_id"] = token_data["id"]
     budget["progress"] = 0
     budget_result = db.budgets.insert_one(budget)
-    return JSONResponse({"message": "Budget created", "budget_id": str(budget_result.inserted_id)})
+    return JSONResponse(
+        {"message": "Budget created", "budget_id": str(budget_result.inserted_id)}
+    )
+
 
 @router.put("/budget/{budget_id}")
 @middleware
@@ -40,6 +45,7 @@ async def update_budget(req: Request, budget_id: str, budget: EditBudgetSchema):
         {"$set": dict(budget)},
     )
     return JSONResponse({"message": "Budget updated"})
+
 
 @router.delete("/budget/{budget_id}")
 @middleware
