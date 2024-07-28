@@ -93,3 +93,13 @@ export const deleteExpense = async (_id: string): Promise<ApiResponse> => {
     return handleError(error);
   }
 };
+
+export const getAverage = async () => {
+  try {
+    const response = await apiClient.get("/average");
+    return handleResponse(response);
+  } catch (error) {
+    console.error("Error getting average:", error);
+    throw error;
+  }
+};

@@ -14,6 +14,7 @@ import {
   LineElement,
 } from "chart.js";
 import Sidebar from "@/components/Sidebar";
+import Average from "@/components/Average";
 
 // Register Chart.js components
 ChartJS.register(
@@ -99,16 +100,10 @@ const AnalyticsPage = () => {
         <h1 className="text-3xl sm:text-4xl font-bold mb-6 text-[#a991f7]">
           Analytics
         </h1>
-        <div className="mb-8 sm:mb-10 p-4 rounded-lg shadow-md bg-[#363848] flex justify-between">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
-              Total Expenses
-            </h2>
-            <p className="text-lg sm:text-xl">${data.totalExpenses}</p>
-          </div>
-          <h2 className="font-bold text-2xl">You could have saved more 🫣</h2>
+        <div className="shadow-2xl">
+          <Average />
         </div>
-        <div className="mb-8 sm:mb-10 p-4 rounded-lg shadow-md bg-[#363848]">
+        <div className="mb-8 mt-10 sm:mb-10 p-4 rounded-lg shadow-md bg-[#363848]">
           <h2 className="text-xl sm:text-2xl font-semibold mb-4">
             Expense Breakdown
           </h2>
