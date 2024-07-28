@@ -56,7 +56,7 @@ const DashboardPage = () => {
       buttonColor: "bg-yellow-500",
       titleColor: "text-yellow-500",
       handleClick: () => {
-        router.push("/dashboard/analysis");
+        router.push("/dashboard/analytics");
       },
     },
   ];
