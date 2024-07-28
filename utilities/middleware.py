@@ -10,6 +10,7 @@ from utilities.response import JSONResponse
 load_dotenv()
 SECRET = getenv("SECRET")
 
+
 def middleware(func):
     @wraps(func)
     async def wrapper(req: Request, *args, **kwargs):
@@ -19,5 +20,6 @@ def middleware(func):
             read_token(req.headers.get("Authorization"), secret=SECRET)
         except Exception as e:
             return JSONResponse({"error": "Invalid token"}, status_code=403)
+        return await func(req, *args, **kwargs)
 
     return wrapper
