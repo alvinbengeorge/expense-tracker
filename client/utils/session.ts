@@ -11,7 +11,7 @@ export const setToken = (token: string) => {
   cookies().set("token", token, {
     path: "/",
     domain: "localhost",
-    maxAge: 300,
+    maxAge: 3600,
     httpOnly: true,
     secure: false,
   });

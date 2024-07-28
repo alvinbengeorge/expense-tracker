@@ -15,6 +15,7 @@ import {
 } from "chart.js";
 import Sidebar from "@/components/Sidebar";
 import Average from "@/components/Average";
+import Loader from "@/components/Loader"; // Import the Loader component
 
 // Register Chart.js components
 ChartJS.register(
@@ -49,17 +50,33 @@ const mockData = {
 };
 
 const AnalyticsPage = () => {
-  const [data, setData] = useState(mockData);
+  const [data, setData] = useState<any>(null); // Initial state is null to indicate loading
 
   useEffect(() => {
-    //todo api call
+    // Simulate an API call
+    setTimeout(() => {
+      setData(mockData);
+    }, 2000); // Simulate a 2 second delay
   }, []);
 
-  const expenseCategories = data.expenseCategories.map((item) => item.category);
-  const expenseAmounts = data.expenseCategories.map((item) => item.amount);
+  if (!data) {
+    return (
+      <div className="flex gap-5">
+        <Sidebar />
+        <div className="p-6 sm:p-10 font-bricolage min-h-screen w-[70vw]">
+          <Loader />
+        </div>
+      </div>
+    );
+  }
 
-  const monthlyLabels = data.monthlyTrends.map((item) => item.month);
-  const monthlyAmounts = data.monthlyTrends.map((item) => item.amount);
+  const expenseCategories = data.expenseCategories.map(
+    (item: any) => item.category
+  );
+  const expenseAmounts = data.expenseCategories.map((item: any) => item.amount);
+
+  const monthlyLabels = data.monthlyTrends.map((item: any) => item.month);
+  const monthlyAmounts = data.monthlyTrends.map((item: any) => item.amount);
 
   const expenseCategoryData = {
     labels: expenseCategories,

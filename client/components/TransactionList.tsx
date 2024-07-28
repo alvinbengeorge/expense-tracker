@@ -22,6 +22,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import Loader from "@/components/Loader"; // Import the Loader component
 
 interface Transaction {
   _id?: string;
@@ -73,6 +74,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
     useState<Transaction[]>(initialTransactions);
   const [currentTransaction, setCurrentTransaction] =
     useState<Transaction | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -87,6 +89,8 @@ const TransactionList: React.FC<TransactionListProps> = ({
       } catch (error) {
         toast.error("Failed to fetch transactions.");
         console.error("Failed to fetch transactions:", error);
+      } finally {
+        setIsLoading(false); // Stop loading once the data is fetched
       }
     };
 
@@ -171,6 +175,10 @@ const TransactionList: React.FC<TransactionListProps> = ({
     acc[category].push(transaction);
     return acc;
   }, {} as Record<string, Transaction[]>);
+
+  if (isLoading) {
+    return <Loader />; // Display the loader while data is being fetched
+  }
 
   return (
     <div className="p-6 rounded shadow-lg bg-[#353847]">

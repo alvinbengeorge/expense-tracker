@@ -8,10 +8,12 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // State to track loading status
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true); // Start loading
 
     try {
       const res = await loginUser(username, password);
@@ -35,6 +37,8 @@ const Login = () => {
       }
     } catch (err) {
       toast.error("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -64,8 +68,15 @@ const Login = () => {
             required
           />
         </label>
-        <button type="submit" className="btn btn-secondary">
-          Login
+        <button
+          type="submit"
+          className="btn btn-secondary flex items-center justify-center"
+        >
+          {loading ? (
+            <span className="loading loading-dots loading-lg"></span>
+          ) : (
+            "Login"
+          )}
         </button>
       </form>
       {error && <p style={{ color: "red" }}>{error}</p>}
