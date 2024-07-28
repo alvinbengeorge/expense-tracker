@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Bar, Pie, Line } from "react-chartjs-2";
+import { Pie, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -15,9 +15,8 @@ import {
 } from "chart.js";
 import Sidebar from "@/components/Sidebar";
 import Average from "@/components/Average";
-import Loader from "@/components/Loader"; // Import the Loader component
+import Loader from "@/components/Loader";
 
-// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -50,13 +49,12 @@ const mockData = {
 };
 
 const AnalyticsPage = () => {
-  const [data, setData] = useState<any>(null); // Initial state is null to indicate loading
+  const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    // Simulate an API call
     setTimeout(() => {
       setData(mockData);
-    }, 2000); // Simulate a 2 second delay
+    }, 2000);
   }, []);
 
   if (!data) {

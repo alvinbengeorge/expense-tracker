@@ -1,4 +1,3 @@
-// components/TransactionForm.tsx
 import { postExpense } from "@/utils/api";
 import { ArrowRightLeft, Component, IndianRupee } from "lucide-react";
 import { useRouter } from "next/navigation";

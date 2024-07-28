@@ -1,9 +1,4 @@
-import {
-  getExpenses,
-  postExpense,
-  updateExpense,
-  deleteExpense,
-} from "@/utils/api";
+import { getExpenses, updateExpense, deleteExpense } from "@/utils/api";
 import { ApiResponse } from "@/utils/apiClient";
 import {
   Delete,
@@ -22,7 +17,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import Loader from "@/components/Loader"; // Import the Loader component
+import Loader from "@/components/Loader";
 
 interface Transaction {
   _id?: string;
@@ -90,7 +85,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
         toast.error("Failed to fetch transactions.");
         console.error("Failed to fetch transactions:", error);
       } finally {
-        setIsLoading(false); // Stop loading once the data is fetched
+        setIsLoading(false);
       }
     };
 
@@ -177,7 +172,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
   }, {} as Record<string, Transaction[]>);
 
   if (isLoading) {
-    return <Loader />; // Display the loader while data is being fetched
+    return <Loader />;
   }
 
   return (

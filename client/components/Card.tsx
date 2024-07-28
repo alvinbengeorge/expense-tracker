@@ -1,4 +1,3 @@
-// components/Card.js
 const Card = ({
   title,
   description,
