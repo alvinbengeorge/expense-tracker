@@ -8,5 +8,11 @@ export const getToken = async () => {
 };
 
 export const setToken = (token: string) => {
-  document.cookie = `token=${token}; path=/`;
+  cookies().set("token", token, {
+    path: "/",
+    domain: "localhost",
+    maxAge: 300,
+    httpOnly: true,
+    secure: false,
+  });
 };
