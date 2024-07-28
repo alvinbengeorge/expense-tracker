@@ -103,3 +103,33 @@ export const getAverage = async () => {
     throw error;
   }
 };
+
+export const postBudgets = async (budget: any) => {
+  try {
+    const response = await apiClient.post("/budget", budget);
+    return handleResponse(response);
+  } catch (error) {
+    console.error("Error posting budgets:", error);
+    throw error;
+  }
+};
+
+export const getBudgets = async () => {
+  try {
+    const response = await apiClient.get("/budget");
+    return handleResponse(response);
+  } catch (error) {
+    console.error("Error fetching budgets:", error);
+    throw error;
+  }
+};
+
+export const updateBudget = async (budgetData: any, _id: string) => {
+  try {
+    const response = await apiClient.put(`/budget/${_id}`, budgetData);
+    return handleResponse(response);
+  } catch (error) {
+    console.error("Error updating budget:", error);
+    throw error;
+  }
+};

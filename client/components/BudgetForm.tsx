@@ -1,19 +1,40 @@
 import { useState } from "react";
-import { ArrowUpCircle, DollarSign, Calendar, Star } from "lucide-react";
+import { ArrowUpCircle, DollarSign, Calendar } from "lucide-react";
+import toast from "react-hot-toast";
+import { postBudgets } from "@/utils/api";
 
-const BudgetForm = ({}) => {
+const BudgetForm = () => {
   const [name, setName] = useState("");
   const [target, setTarget] = useState<number>(0);
   const [achieved, setAchieved] = useState<number>(0);
   const [endDate, setEndDate] = useState("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const newBudget = { name, target, achieved, endDate, icon: <Star /> };
-    setName("");
-    setTarget(0);
-    setAchieved(0);
-    setEndDate("");
+
+    const newBudget = {
+      budget_name: name,
+      amount: target,
+      achieved_by: achieved,
+    };
+
+    try {
+      console.log(newBudget);
+      const response = await postBudgets(newBudget);
+      if (response.status === "success") {
+        toast.success("Budget added successfully!");
+        setName("");
+        setTarget(0);
+        setAchieved(0);
+        setEndDate("");
+      } else {
+        toast.error("Failed to add budget.");
+        console.error("Failed to add budget:", response.error);
+      }
+    } catch (error) {
+      toast.error("Failed to add budget.");
+      console.error("Failed to add budget:", error);
+    }
   };
 
   return (
