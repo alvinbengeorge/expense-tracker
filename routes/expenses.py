@@ -31,6 +31,15 @@ async def create_expense(req: Request, expense: Expense):
     db.expenses.insert_one(expense)
     return JSONResponse({"message": "Expense created"})
 
+@router.put("/expenses/{expense_id}")
+@middleware
+async def update_expense(req: Request, expense_id: str, expense: Expense):
+    token_data = read_token(req.headers.get("Authorization"), secret=db.secret)
+    db.expenses.update_one(
+        {"_id": ObjectId(expense_id), "user_id": token_data["id"]},
+        {"$set": dict(expense)},
+    )
+    return JSONResponse({"message": "Expense updated"})
 
 @router.delete("/expenses/{expense_id}")
 @middleware
