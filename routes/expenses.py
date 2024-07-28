@@ -1,3 +1,4 @@
+from bson import ObjectId
 from fastapi import APIRouter, Request
 from utilities.database import Database
 from utilities.response import JSONResponse
@@ -35,7 +36,7 @@ async def create_expense(req: Request, expense: Expense):
 @middleware
 async def delete_expense(req: Request, expense_id: str):
     token_data = read_token(req.headers.get("Authorization"), secret=db.secret)
-    db.expenses.delete_one({"_id": expense_id, "user_id": token_data["id"]})
+    db.expenses.delete_one({"_id": ObjectId(expense_id), "user_id": token_data["id"]})
     return JSONResponse({"message": "Expense deleted"})
 
 
